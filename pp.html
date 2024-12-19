@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Analytics & Inventory Dashboard</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --light: #ecf0f1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+            color: var(--primary);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            margin: 0;
+            color: var(--secondary);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .card h3 {
+            margin: 0;
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .chart-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin: 2rem auto;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .transactions, .inventory {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        #transactionForm, #inventoryForm, #bankBalanceForm {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        input, select {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .btn {
+            background: var(--secondary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-edit {
+            background: var(--success);
+            margin-right: 0.5rem;
+        }
+
+        .btn-edit:hover {
+            background: #27ae60;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            background: white;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: var(--light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        #expenseDifference {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 1rem;
+        }
+
+        .nav-tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .low-stock {
+            color: var(--danger);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card, .chart-container, .transactions, .inventory {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Business Analytics & Inventory Dashboard</h1>
+        
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="switchTab('finance')">Finance</div>
+            <div class="nav-tab" onclick="switchTab('inventory')">Inventory</div>
+        </div>
+
+        <div id="financeTab" class="tab-content active">
+            <div class="dashboard">
+                <div class="card">
+                    <h2>Total Revenue</h2>
+                    <h3 id="totalRevenue">$0</h3>
+                </div>
+                <div class="card">
+                    <h2>Total Expenses</h2>
+                    <h3 id="totalExpenses">$0</h3>
+                    <p id="expenseDifference"></p>
+                </div>
+                <div class="card">
+                    <h2>Net Profit</h2>
+                    <h3 id="totalProfit">$0</h3>
+                </div>
+                <div class="card">
+                    <h2>Bank Balance</h2>
+                    <h3 id="bankBalance">$0</h3>
+                </div>
+            </div>
+
+            <div class="transactions">
+                <h2>Set Bank Balance</h2>
+                <form id="bankBalanceForm">
+                    <input type="number" id="newBankBalance" placeholder="Enter Bank Balance ($)" required>
+                    <button type="submit" class="btn">Update Balance</button>
+                </form>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="expenseChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="bankChart"></canvas>
+            </div>
+
+            <div class="transactions">
+                <h2>Add New Transaction</h2>
+                <form id="transactionForm">
+                    <input type="text" id="description" placeholder="Transaction Description" required>
+                    <input type="number" id="amount" placeholder="Amount ($)" required>
+                    <select id="type">
+                        <option value="revenue">Revenue</option>
+                        <option value="expense">Expense</option>
+                        <option value="bank_deposit">Bank Deposit</option>
+                        <option value="bank_withdrawal">Bank Withdrawal</option>
+                    </select>
+                    <input type="text" id="bankReference" placeholder="Bank Reference (optional)">
+                    <button type="submit" class="btn">Add Transaction</button>
+                </form>
+
+                <h2>Recent Transactions</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Bank Reference</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionList">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="inventoryTab" class="tab-content">
+            <div class="dashboard">
+                <div class="card">
+                    <h2>Total Items</h2>
+                    <h3 id="totalItems">0</h3>
+                </div>
+                <div class="card">
+                    <h2>Low Stock Items</h2>
+                    <h3 id="lowStockItems">0</h3>
+                </div>
+                <div class="card">
+                    <h2>Total Stock Value</h2>
+                    <h3 id="stockValue">$0</h3>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="inventoryChart"></canvas>
+            </div>
+
+            <div class="inventory">
+                <h2>Add/Update Inventory Item</h2>
+                <form id="inventoryForm">
+                    <input type="hidden" id="editItemIndex" value="">
+                    <input type="text" id="itemName" placeholder="Item Name" required>
+                    <input type="number" id="quantity" placeholder="Quantity" required>
+                    <input type="number" id="unitPrice" placeholder="Unit Price ($)" required>
+                    <input type="number" id="reorderPoint" placeholder="Reorder Point" required>
+                    <button type="submit" class="btn">Add/Update Item</button>
+                    <button type="button" class="btn" onclick="resetForm()">Clear Form</button>
+                </form>
+
+                <h2>Inventory List</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total Value</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryList">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        let transactions = [];
+        let inventory = [];
+        let expenseChart = null;
+        let bankChart = null;
+        let inventoryChart = null;
+        let bankBalance = 0;
+
+        document.getElementById('bankBalanceForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            bankBalance = parseFloat(document.getElementById('newBankBalance').value);
+            updateDashboard();
+            this.reset();
+        });
+
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            
+            document.querySelector(`.nav-tab:nth-child(${tab === 'finance' ? '1' : '2'}`).classList.add('active');
+            document.getElementById(`${tab}Tab`).classList.add('active');
+            
+            if(tab === 'inventory') {
+                updateInventoryChart();
+            } else {
+                updateChart();
+                updateBankChart();
+            }
+        }
+
+        document.getElementById('transactionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const description = document.getElementById('description').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const type = document.getElementById('type').value;
+            const bankReference = document.getElementById('bankReference').value;
+            
+            const transaction = {
+                description,
+                amount,
+                type,
+                bankReference,
+                date: new Date().toLocaleDateString()
+            };
+            
+            if (type === 'bank_deposit') {
+                bankBalance += amount;
+            } else if (type === 'bank_withdrawal') {
+                bankBalance -= amount;
+            }
+            
+            transactions.push(transaction);
+            updateDashboard();
+            addTransactionToTable(transaction);
+            
+            this.reset();
+        });
+
+        document.getElementById('inventoryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const itemName = document.getElementById('itemName').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const unitPrice = parseFloat(document.getElementById('unitPrice').value);
+            const reorderPoint = parseInt(document.getElementById('reorderPoint').value);
+            const editIndex = document.getElementById('editItemIndex').value;
+            
+            if(editIndex !== '') {
+                // Update existing item
+                inventory[editIndex] = {
+                    name: itemName,
+                    quantity,
+                    unitPrice,
+                    reorderPoint
+                };
+                document.getElementById('editItemIndex').value = '';
+            } else {
+                // Add new item
+                const existingItemIndex = inventory.findIndex(item => item.name === itemName);
+                
+                if(existingItemIndex >= 0) {
+                    inventory[existingItemIndex].quantity = quantity;
+                    inventory[existingItemIndex].unitPrice = unitPrice;
+                    inventory[existingItemIndex].reorderPoint = reorderPoint;
+                } else {
+                    inventory.push({
+                        name: itemName,
+                        quantity,
+                        unitPrice,
+                        reorderPoint
+                    });
+                }
+            }
+            
+            updateInventoryDashboard();
+            this.reset();
+        });
+
+        function editItem(index) {
+            const item = inventory[index];
+            document.getElementById('editItemIndex').value = index;
+            document.getElementById('itemName').value = item.name;
+            document.getElementById('quantity').value = item.quantity;
+            document.getElementById('unitPrice').value = item.unitPrice;
+            document.getElementById('reorderPoint').value = item.reorderPoint;
+        }
+
+        function deleteItem(index) {
+            if(confirm('Are you sure you want to delete this item?')) {
+                inventory.splice(index, 1);
+                updateInventoryDashboard();
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('inventoryForm').reset();
+            document.getElementById('editItemIndex').value = '';
+        }
+
+        function updateDashboard() {
+            const revenue = transactions
+                .filter(t => t.type === 'revenue')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const expenses = transactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const profit = revenue - expenses;
+            
+            document.getElementById('totalRevenue').textContent = `$${revenue.toFixed(2)}`;
+            document.getElementById('totalExpenses').textContent = `$${expenses.toFixed(2)}`;
+            document.getElementById('totalProfit').textContent = `$${profit.toFixed(2)}`;
+            document.getElementById('bankBalance').textContent = `$${bankBalance.toFixed(2)}`;
+
+            calculateDifference();
+            updateChart();
+            updateBankChart();
+        }
+
+        function updateInventoryDashboard() {
+            const totalItems = inventory.length;
+            const lowStockItems = inventory.filter(item => item.quantity <= item.reorderPoint).length;
+            const stockValue = inventory.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+            
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('lowStockItems').textContent = lowStockItems;
+            document.getElementById('stockValue').textContent = `$${stockValue.toFixed(2)}`;
+            
+            updateInventoryTable();
+            updateInventoryChart();
+        }
+
+        function updateInventoryTable() {
+            const tbody = document.getElementById('inventoryList');
+            tbody.innerHTML = '';
+            
+            inventory.forEach((item, index) => {
+                const row = document.createElement('tr');
+                const status = item.quantity <= item.reorderPoint ? 'Low Stock' : 'In Stock';
+                const statusClass = item.quantity <= item.reorderPoint ? 'low-stock' : '';
+                
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>${item.quantity}</td>
+                    <td>$${item.unitPrice.toFixed(2)}</td>
+                    <td>$${(item.quantity * item.unitPrice).toFixed(2)}</td>
+                    <td class="${statusClass}">${status}</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-edit" onclick="editItem(${index})">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteItem(${index})">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function addTransactionToTable(transaction) {
+            const row = document.createElement('tr');
+            const typeColor = {
+                'revenue': '#2ecc71',
+                'expense': '#e74c3c',
+                'bank_deposit': '#3498db',
+                'bank_withdrawal': '#e67e22'
+            };
+            
+            row.innerHTML = `
+                <td>${transaction.description}</td>
+                <td>$${transaction.amount.toFixed(2)}</td>
+                <td><span style="color: ${typeColor[transaction.type]}">${transaction.type}</span></td>
+                <td>${transaction.bankReference || '-'}</td>
+                <td>${transaction.date}</td>
+            `;
+            document.getElementById('transactionList').prepend(row);
+        }
+
+        function calculateDifference() {
+            const currentExpenses = transactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const previousExpenses = transactions
+                .filter(t => t.type === 'expense' && new Date(t.date) < new Date())
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const difference = currentExpenses - previousExpenses;
+            const percentChange = previousExpenses === 0 ? 100 : ((difference / previousExpenses) * 100);
+            
+            const differenceElement = document.getElementById('expenseDifference');
+            if (differenceElement) {
+                differenceElement.textContent = `${difference >= 0 ? '↑' : '↓'} $${Math.abs(difference).toFixed(2)} (${percentChange.toFixed(1)}%)`;
+                differenceElement.style.color = difference >= 0 ? 'var(--danger)' : 'var(--success)';
+            }
+        }
+
+        function updateChart() {
+            const ctx = document.getElementById('expenseChart').getContext('2d');
+            
+            const revenue = transactions
+                .filter(t => t.type === 'revenue')
+                .reduce((sum, t) => sum + t.amount, 0);
+                
+            const expenses = transactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0);
+
+            if (expenseChart) {
+                expenseChart.destroy();
+            }
+
+            expenseChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Revenue', 'Expenses'],
+                    datasets: [{
+                        data: [revenue, expenses],
+                        backgroundColor: [
+                            'rgba(46, 204, 113, 0.8)',
+                            'rgba(231, 76, 60, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(46, 204, 113, 1)',
+                            'rgba(231, 76, 60, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Revenue vs Expenses',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            padding: 20
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateBankChart() {
+            const ctx = document.getElementById('bankChart').getContext('2d');
+            
+            const deposits = transactions
+                .filter(t => t.type === 'bank_deposit')
+                .reduce((sum, t) => sum + t.amount, 0);
+                
+            const withdrawals = transactions
+                .filter(t => t.type === 'bank_withdrawal')
+                .reduce((sum, t) => sum + t.amount, 0);
+
+            if (bankChart) {
+                bankChart.destroy();
+            }
+
+            bankChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Deposits', 'Withdrawals', 'Current Balance'],
+                    datasets: [{
+                        data: [deposits, withdrawals, bankBalance],
+                        backgroundColor: [
+                            'rgba(52, 152, 219, 0.8)',
+                            'rgba(230, 126, 34, 0.8)',
+                            'rgba(46, 204, 113, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(52, 152, 219, 1)',
+                            'rgba(230, 126, 34, 1)',
+                            'rgba(46, 204, 113, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Bank Transactions Overview',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            padding: 20
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateInventoryChart() {
+            const ctx = document.getElementById('inventoryChart').getContext('2d');
+            
+            if (inventoryChart) {
+                inventoryChart.destroy();
+            }
+
+            inventoryChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: inventory.map(item => item.name),
+                    datasets: [{
+                        label: 'Current Stock',
+                        data: inventory.map(item => item.quantity),
+                        backgroundColor: inventory.map(item => 
+                            item.quantity <= item.reorderPoint ? 'rgba(231, 76, 60, 0.8)' : 'rgba(46, 204, 113, 0.8)'
+                        ),
+                        borderColor: inventory.map(item => 
+                            item.quantity <= item.reorderPoint ? 'rgba(231, 76, 60, 1)' : 'rgba(46, 204, 113, 1)'
+                        ),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Current Inventory Levels',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            padding: 20
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initial render
+        updateDashboard();
+        updateInventoryDashboard();
+    </script>
+</body>
+</html>
