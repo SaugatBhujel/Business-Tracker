@@ -270,6 +270,13 @@
                     <button type="submit" class="btn">Add Transaction</button>
                 </form>
 
+                <div class="date-filter">
+                    <input type="date" id="startDate">
+                    <input type="date" id="endDate">
+                    <button class="btn" onclick="filterTransactions()">Filter</button>
+                    <button class="btn" onclick="resetFilter()">Reset</button>
+                </div>
+
                 <h2>Recent Transactions</h2>
                 <table>
                     <thead>
@@ -348,6 +355,27 @@
         let inventoryChart = null;
         let bankBalance = 0;
 
+        function saveData() {
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            localStorage.setItem('bankBalance', bankBalance);
+        }
+
+        function loadData() {
+            transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+            bankBalance = parseFloat(localStorage.getItem('bankBalance')) || 0;
+            
+            // Refresh all displays
+            updateDashboard();
+            updateInventoryDashboard();
+            
+            // Populate transaction table
+            transactions.forEach(transaction => addTransactionToTable(transaction));
+        }
+
+        document.addEventListener('DOMContentLoaded', loadData);
+
         document.getElementById('bankBalanceForm').addEventListener('submit', function(e) {
             e.preventDefault();
             bankBalance = parseFloat(document.getElementById('newBankBalance').value);
@@ -393,6 +421,7 @@
             }
             
             transactions.push(transaction);
+            saveData();
             updateDashboard();
             addTransactionToTable(transaction);
             
@@ -725,9 +754,66 @@
             });
         }
 
+        function filterTransactions() {
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+            
+            const filteredTransactions = transactions.filter(t => {
+                const tDate = new Date(t.date);
+                return tDate >= startDate && tDate <= endDate;
+            });
+            
+            // Update table with filtered transactions
+            document.getElementById('transactionList').innerHTML = '';
+            filteredTransactions.forEach(t => addTransactionToTable(t));
+        }
+
+        function resetFilter() {
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            document.getElementById('transactionList').innerHTML = '';
+            transactions.forEach(t => addTransactionToTable(t));
+        }
+
+        function exportData(type) {
+            let data;
+            let filename;
+            
+            if (type === 'transactions') {
+                data = transactions;
+                filename = 'transactions.json';
+            } else if (type === 'inventory') {
+                data = inventory;
+                filename = 'inventory.json';
+            }
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function searchInventory(query) {
+            const searchTerm = query.toLowerCase();
+            const filteredInventory = inventory.filter(item => 
+                item.name.toLowerCase().includes(searchTerm)
+            );
+            
+            updateInventoryTable(filteredInventory);
+        }
+
         // Initial render
         updateDashboard();
         updateInventoryDashboard();
+
+        window.addEventListener('resize', function() {
+            if (expenseChart) updateChart();
+            if (bankChart) updateBankChart();
+            if (inventoryChart) updateInventoryChart();
+        });
     </script>
 </body>
 </html>
