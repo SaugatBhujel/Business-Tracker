@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Business Analytics & Inventory Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         :root {
             --primary: #2c3e50;
@@ -207,6 +208,282 @@
             display: flex;
             gap: 0.5rem;
         }
+
+        .billing-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h4 {
+            margin: 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .stat-card .trend {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .bill-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-paid {
+            background: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+        }
+
+        .status-pending {
+            background: rgba(241, 196, 15, 0.2);
+            color: #f39c12;
+        }
+
+        .status-overdue {
+            background: rgba(231, 76, 60, 0.2);
+            color: #c0392b;
+        }
+
+        .bill-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding-left: 2.5rem;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+        }
+
+        .bill-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .export-btn {
+            background: var(--primary);
+        }
+
+        .print-btn {
+            background: var(--success);
+        }
+
+        #billingForm {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .bill-table {
+            overflow-x: auto;
+        }
+
+        .bill-table table {
+            min-width: 800px;
+        }
+
+        .payment-history {
+            font-size: 0.85rem;
+            color: var(--primary);
+            margin-top: 0.5rem;
+        }
+
+        .billing-container {
+            padding: 20px;
+        }
+
+        .billing-nav {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 1rem;
+        }
+
+        .billing-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .billing-section.active {
+            display: block;
+        }
+
+        .filters-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding-left: 2.5rem;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+        }
+
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-section {
+            border: 1px solid #eee;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-section h3 {
+            margin: 0 0 1rem 0;
+            color: var(--primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .reports-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .report-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .bill-item {
+            border: 1px solid #eee;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .bill-item .remove-item {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            background: var(--danger);
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -216,6 +493,7 @@
         <div class="nav-tabs">
             <div class="nav-tab active" onclick="switchTab('finance')">Finance</div>
             <div class="nav-tab" onclick="switchTab('inventory')">Inventory</div>
+            <div class="nav-tab" onclick="switchTab('billing')">Billing</div>
         </div>
 
         <div id="financeTab" class="tab-content active">
@@ -269,13 +547,6 @@
                     <input type="text" id="bankReference" placeholder="Bank Reference (optional)">
                     <button type="submit" class="btn">Add Transaction</button>
                 </form>
-
-                <div class="date-filter">
-                    <input type="date" id="startDate">
-                    <input type="date" id="endDate">
-                    <button class="btn" onclick="filterTransactions()">Filter</button>
-                    <button class="btn" onclick="resetFilter()">Reset</button>
-                </div>
 
                 <h2>Recent Transactions</h2>
                 <table>
@@ -343,6 +614,243 @@
                 </table>
             </div>
         </div>
+
+        <div id="billingTab" class="tab-content">
+            <div class="billing-stats">
+                <div class="stat-card">
+                    <h4>Total Bills</h4>
+                    <div class="value" id="totalBills">0</div>
+                    <div class="trend" id="billsTrend">↑ 5% this month</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Pending Amount</h4>
+                    <div class="value" id="pendingAmount">$0</div>
+                    <div class="trend" id="pendingTrend">2 bills pending</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Paid Amount</h4>
+                    <div class="value" id="paidAmount">$0</div>
+                    <div class="trend" id="paidTrend">↑ $1,234 this month</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Overdue Amount</h4>
+                    <div class="value" id="overdueAmount">$0</div>
+                    <div class="trend" id="overdueTrend">3 bills overdue</div>
+                </div>
+            </div>
+
+            <div class="billing-container">
+                <!-- Billing Navigation -->
+                <div class="billing-nav">
+                    <button class="btn" onclick="showSection('customers')">Customers</button>
+                    <button class="btn" onclick="showSection('createBill')">Create Bill</button>
+                    <button class="btn" onclick="showSection('billsList')">Bills List</button>
+                    <button class="btn" onclick="showSection('reports')">Reports</button>
+                </div>
+
+                <!-- Customers Section -->
+                <div id="customersSection" class="billing-section">
+                    <h2>Customer Management</h2>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="customerSearch" placeholder="Search customers...">
+                    </div>
+                    
+                    <button class="btn" onclick="showCustomerForm()">Add New Customer</button>
+                    
+                    <div id="customerForm" class="form-container" style="display: none;">
+                        <h3>Add/Edit Customer</h3>
+                        <form id="addCustomerForm">
+                            <input type="hidden" id="customerId">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Customer Name*</label>
+                                    <input type="text" id="newCustomerName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" id="newCustomerEmail">
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone</label>
+                                    <input type="tel" id="newCustomerPhone">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Address</label>
+                                <textarea id="newCustomerAddress" rows="3"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn">Save Customer</button>
+                                <button type="button" class="btn btn-secondary" onclick="hideCustomerForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Total Bills</th>
+                                    <th>Outstanding</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customersList"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Create Bill Section -->
+                <div id="createBillSection" class="billing-section" style="display: none;">
+                    <h2>Create New Bill</h2>
+                    <form id="createBillForm">
+                        <div class="form-section">
+                            <h3>Select Customer</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Customer*</label>
+                                    <select id="billCustomer" required>
+                                        <option value="">Select Customer</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Bill Number*</label>
+                                    <input type="text" id="billNumber" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Bill Date*</label>
+                                    <input type="date" id="billDate" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>Items</h3>
+                            <div id="billItems"></div>
+                            <button type="button" class="btn btn-secondary" onclick="addBillItem()">Add Item</button>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>Payment Details</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Subtotal</label>
+                                    <input type="number" id="subtotal" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tax Rate (%)</label>
+                                    <input type="number" id="taxRate" value="0" onchange="calculateBillTotals()">
+                                </div>
+                                <div class="form-group">
+                                    <label>Tax Amount</label>
+                                    <input type="number" id="taxAmount" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Total Amount</label>
+                                    <input type="number" id="totalAmount" readonly>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Payment Status</label>
+                                    <select id="paymentStatus">
+                                        <option value="pending">Pending</option>
+                                        <option value="paid">Paid</option>
+                                        <option value="partial">Partial Payment</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Payment Method</label>
+                                    <select id="paymentMethod">
+                                        <option value="cash">Cash</option>
+                                        <option value="card">Card</option>
+                                        <option value="bank">Bank Transfer</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Due Date</label>
+                                    <input type="date" id="dueDate">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>Additional Information</h3>
+                            <div class="form-group">
+                                <label>Notes</label>
+                                <textarea id="billNotes" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn">Create Bill</button>
+                            <button type="button" class="btn btn-secondary" onclick="previewBill()">Preview</button>
+                            <button type="button" class="btn btn-secondary" onclick="resetBillForm()">Reset</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Bills List Section -->
+                <div id="billsListSection" class="billing-section" style="display: none;">
+                    <h2>Bills List</h2>
+                    <div class="filters-container">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="billSearch" placeholder="Search bills...">
+                        </div>
+                        <select id="statusFilter">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="paid">Paid</option>
+                            <option value="partial">Partial</option>
+                            <option value="overdue">Overdue</option>
+                        </select>
+                        <input type="month" id="monthFilter">
+                        <button class="btn" onclick="exportBills()">Export</button>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Bill #</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Due Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="billsList"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Reports Section -->
+                <div id="reportsSection" class="billing-section" style="display: none;">
+                    <h2>Billing Reports</h2>
+                    <div class="reports-container">
+                        <div class="report-card">
+                            <h3>Monthly Revenue</h3>
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                        <div class="report-card">
+                            <h3>Payment Status Distribution</h3>
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                        <div class="report-card">
+                            <h3>Top Customers</h3>
+                            <canvas id="customersChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -354,16 +862,21 @@
         let bankChart = null;
         let inventoryChart = null;
         let bankBalance = 0;
+        let bills = [];
+        let customers = [];
+        let currentSection = 'customers';
 
         function saveData() {
             localStorage.setItem('transactions', JSON.stringify(transactions));
             localStorage.setItem('inventory', JSON.stringify(inventory));
             localStorage.setItem('bankBalance', bankBalance);
+            localStorage.setItem('bills', JSON.stringify(bills));
         }
 
         function loadData() {
             transactions = JSON.parse(localStorage.getItem('transactions')) || [];
             inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+            bills = JSON.parse(localStorage.getItem('bills')) || [];
             bankBalance = parseFloat(localStorage.getItem('bankBalance')) || 0;
             
             // Refresh all displays
@@ -387,12 +900,13 @@
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             
-            document.querySelector(`.nav-tab:nth-child(${tab === 'finance' ? '1' : '2'}`).classList.add('active');
+            const tabIndex = tab === 'finance' ? '1' : (tab === 'inventory' ? '2' : '3');
+            document.querySelector(`.nav-tab:nth-child(${tabIndex})`).classList.add('active');
             document.getElementById(`${tab}Tab`).classList.add('active');
             
             if(tab === 'inventory') {
                 updateInventoryChart();
-            } else {
+            } else if(tab === 'finance') {
                 updateChart();
                 updateBankChart();
             }
@@ -754,27 +1268,6 @@
             });
         }
 
-        function filterTransactions() {
-            const startDate = new Date(document.getElementById('startDate').value);
-            const endDate = new Date(document.getElementById('endDate').value);
-            
-            const filteredTransactions = transactions.filter(t => {
-                const tDate = new Date(t.date);
-                return tDate >= startDate && tDate <= endDate;
-            });
-            
-            // Update table with filtered transactions
-            document.getElementById('transactionList').innerHTML = '';
-            filteredTransactions.forEach(t => addTransactionToTable(t));
-        }
-
-        function resetFilter() {
-            document.getElementById('startDate').value = '';
-            document.getElementById('endDate').value = '';
-            document.getElementById('transactionList').innerHTML = '';
-            transactions.forEach(t => addTransactionToTable(t));
-        }
-
         function exportData(type) {
             let data;
             let filename;
@@ -805,6 +1298,106 @@
             updateInventoryTable(filteredInventory);
         }
 
+        document.getElementById('billingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const bill = {
+                id: Date.now(),
+                customerName: document.getElementById('customerName').value,
+                customerEmail: document.getElementById('customerEmail').value,
+                customerPhone: document.getElementById('customerPhone').value,
+                customerAddress: document.getElementById('customerAddress').value,
+                billNumber: document.getElementById('billNumber').value,
+                billDate: document.getElementById('billDate').value,
+                dueDate: document.getElementById('dueDate').value,
+                items: Array.from(document.querySelectorAll('.item-row')).map(row => ({
+                    description: row.querySelector('.item-description').value,
+                    quantity: row.querySelector('.item-quantity').value,
+                    price: row.querySelector('.item-price').value,
+                    total: row.querySelector('.item-total').value
+                })),
+                subtotal: document.getElementById('subtotal').value,
+                taxRate: document.getElementById('taxRate').value,
+                taxAmount: document.getElementById('taxAmount').value,
+                amount: document.getElementById('totalAmount').value,
+                notes: document.getElementById('notes').value,
+                status: 'pending'
+            };
+            
+            bills.push(bill);
+            updateBillingDashboard();
+            addBillToTable(bill);
+            saveData();
+            
+            resetBillForm();
+        });
+
+        function updateBillingDashboard() {
+            const totalBills = bills.length;
+            const pendingAmount = bills
+                .filter(b => b.status === 'pending' || b.status === 'overdue')
+                .reduce((sum, b) => sum + b.amount, 0);
+            const paidAmount = bills
+                .filter(b => b.status === 'paid')
+                .reduce((sum, b) => sum + b.amount, 0);
+            
+            document.getElementById('totalBills').textContent = totalBills;
+            document.getElementById('pendingAmount').textContent = `$${pendingAmount.toFixed(2)}`;
+            document.getElementById('paidAmount').textContent = `$${paidAmount.toFixed(2)}`;
+        }
+
+        function addBillToTable(bill) {
+            const row = document.createElement('tr');
+            const statusColors = {
+                'paid': '#2ecc71',
+                'pending': '#f1c40f',
+                'overdue': '#e74c3c'
+            };
+            
+            row.innerHTML = `
+                <td>${bill.billNumber}</td>
+                <td>${bill.customerName}</td>
+                <td>$${bill.amount.toFixed(2)}</td>
+                <td><span style="color: ${statusColors[bill.status]}">${bill.status}</span></td>
+                <td>${bill.billDate}</td>
+                <td>${bill.dueDate}</td>
+                <td class="action-buttons">
+                    <button class="btn btn-edit" onclick="editBill(${bill.id})">Edit</button>
+                    <button class="btn btn-danger" onclick="deleteBill(${bill.id})">Delete</button>
+                </td>
+            `;
+            document.getElementById('billsList').prepend(row);
+        }
+
+        function editBill(id) {
+            const bill = bills.find(b => b.id === id);
+            if (!bill) return;
+            
+            // Populate form with bill data
+            document.getElementById('customerName').value = bill.customerName;
+            document.getElementById('billNumber').value = bill.billNumber;
+            document.getElementById('billAmount').value = bill.amount;
+            document.getElementById('billStatus').value = bill.status;
+            document.getElementById('billDate').value = bill.billDate;
+            document.getElementById('dueDate').value = bill.dueDate;
+            
+            // Remove the old bill
+            bills = bills.filter(b => b.id !== id);
+            updateBillingDashboard();
+            document.getElementById('billsList').innerHTML = '';
+            bills.forEach(b => addBillToTable(b));
+        }
+
+        function deleteBill(id) {
+            if(confirm('Are you sure you want to delete this bill?')) {
+                bills = bills.filter(b => b.id !== id);
+                updateBillingDashboard();
+                document.getElementById('billsList').innerHTML = '';
+                bills.forEach(b => addBillToTable(b));
+                saveData();
+            }
+        }
+
         // Initial render
         updateDashboard();
         updateInventoryDashboard();
@@ -814,6 +1407,422 @@
             if (bankChart) updateBankChart();
             if (inventoryChart) updateInventoryChart();
         });
+
+        // Add these new functions to your existing JavaScript
+        function addItemRow() {
+            const itemRow = document.createElement('div');
+            itemRow.className = 'item-row';
+            itemRow.innerHTML = `
+                <button type="button" class="remove-item" onclick="removeItemRow(this)">×</button>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Item Description*</label>
+                        <input type="text" class="item-description" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity*</label>
+                        <input type="number" class="item-quantity" min="1" required onchange="calculateItemTotal(this)">
+                    </div>
+                    <div class="form-group">
+                        <label>Unit Price ($)*</label>
+                        <input type="number" class="item-price" min="0" step="0.01" required onchange="calculateItemTotal(this)">
+                    </div>
+                    <div class="form-group">
+                        <label>Total</label>
+                        <input type="number" class="item-total" readonly>
+                    </div>
+                </div>
+            `;
+            document.getElementById('itemsList').appendChild(itemRow);
+        }
+
+        function removeItemRow(button) {
+            button.closest('.item-row').remove();
+            calculateTotals();
+        }
+
+        function calculateItemTotal(input) {
+            const row = input.closest('.item-row');
+            const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+            const price = parseFloat(row.querySelector('.item-price').value) || 0;
+            const total = quantity * price;
+            row.querySelector('.item-total').value = total.toFixed(2);
+            calculateTotals();
+        }
+
+        function calculateTotals() {
+            const subtotal = Array.from(document.querySelectorAll('.item-total'))
+                .reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
+            
+            document.getElementById('subtotal').value = subtotal.toFixed(2);
+            
+            const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+            const taxAmount = subtotal * (taxRate / 100);
+            document.getElementById('taxAmount').value = taxAmount.toFixed(2);
+            
+            const total = subtotal + taxAmount;
+            document.getElementById('totalAmount').value = total.toFixed(2);
+        }
+
+        function previewBill() {
+            // Get all form data
+            const billData = {
+                customer: {
+                    name: document.getElementById('customerName').value,
+                    email: document.getElementById('customerEmail').value,
+                    phone: document.getElementById('customerPhone').value,
+                    address: document.getElementById('customerAddress').value
+                },
+                billNumber: document.getElementById('billNumber').value,
+                billDate: document.getElementById('billDate').value,
+                dueDate: document.getElementById('dueDate').value,
+                items: Array.from(document.querySelectorAll('.item-row')).map(row => ({
+                    description: row.querySelector('.item-description').value,
+                    quantity: row.querySelector('.item-quantity').value,
+                    price: row.querySelector('.item-price').value,
+                    total: row.querySelector('.item-total').value
+                })),
+                subtotal: document.getElementById('subtotal').value,
+                taxRate: document.getElementById('taxRate').value,
+                taxAmount: document.getElementById('taxAmount').value,
+                total: document.getElementById('totalAmount').value,
+                notes: document.getElementById('notes').value
+            };
+
+            // Open preview window
+            const previewWindow = window.open('', '', 'height=800,width=600');
+            previewWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Bill Preview</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; padding: 20px; }
+                            .bill-header { text-align: center; margin-bottom: 30px; }
+                            .bill-to { margin-bottom: 20px; }
+                            table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                            th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+                            .totals { text-align: right; margin-top: 20px; }
+                            .notes { margin-top: 30px; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="bill-header">
+                            <h1>BILL</h1>
+                            <p>Bill Number: ${billData.billNumber}</p>
+                            <p>Date: ${billData.billDate}</p>
+                            <p>Due Date: ${billData.dueDate}</p>
+                        </div>
+                        
+                        <div class="bill-to">
+                            <h3>Bill To:</h3>
+                            <p>${billData.customer.name}</p>
+                            <p>${billData.customer.email}</p>
+                            <p>${billData.customer.phone}</p>
+                            <p>${billData.customer.address}</p>
+                        </div>
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${billData.items.map(item => `
+                                    <tr>
+                                        <td>${item.description}</td>
+                                        <td>${item.quantity}</td>
+                                        <td>$${item.price}</td>
+                                        <td>$${item.total}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+
+                        <div class="totals">
+                            <p>Subtotal: $${billData.subtotal}</p>
+                            <p>Tax Rate: ${billData.taxRate}%</p>
+                            <p>Tax Amount: $${billData.taxAmount}</p>
+                            <p><strong>Total Amount: $${billData.total}</strong></p>
+                        </div>
+
+                        <div class="notes">
+                            <h3>Notes:</h3>
+                            <p>${billData.notes}</p>
+                        </div>
+                    </body>
+                </html>
+            `);
+        }
+
+        function resetBillForm() {
+            document.getElementById('billingForm').reset();
+            document.getElementById('itemsList').innerHTML = '';
+            addItemRow(); // Add one empty row
+            calculateTotals();
+        }
+
+        // Add this when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // ... existing load code ...
+            addItemRow(); // Add initial empty item row
+        });
+
+        function showSection(section) {
+            document.querySelectorAll('.billing-section').forEach(s => s.style.display = 'none');
+            document.getElementById(`${section}Section`).style.display = 'block';
+            currentSection = section;
+            
+            if (section === 'reports') {
+                updateReports();
+            }
+        }
+
+        function showCustomerForm() {
+            document.getElementById('customerForm').style.display = 'block';
+            document.getElementById('customerId').value = '';
+        }
+
+        function hideCustomerForm() {
+            document.getElementById('customerForm').style.display = 'none';
+            document.getElementById('addCustomerForm').reset();
+        }
+
+        function addCustomer(customer) {
+            customers.push(customer);
+            saveData();
+            updateCustomersList();
+            updateCustomerSelect();
+        }
+
+        function updateCustomersList() {
+            const tbody = document.getElementById('customersList');
+            tbody.innerHTML = '';
+            
+            customers.forEach((customer, index) => {
+                const customerBills = bills.filter(b => b.customerId === customer.id);
+                const totalBills = customerBills.length;
+                const outstanding = customerBills
+                    .filter(b => b.status !== 'paid')
+                    .reduce((sum, b) => sum + parseFloat(b.amount), 0);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${customer.name}</td>
+                    <td>${customer.email}</td>
+                    <td>${customer.phone}</td>
+                    <td>${totalBills}</td>
+                    <td>$${outstanding.toFixed(2)}</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editCustomer(${index})">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteCustomer(${index})">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateCustomerSelect() {
+            const select = document.getElementById('billCustomer');
+            select.innerHTML = '<option value="">Select Customer</option>';
+            customers.forEach(customer => {
+                select.innerHTML += `<option value="${customer.id}">${customer.name}</option>`;
+            });
+        }
+
+        function editCustomer(index) {
+            const customer = customers[index];
+            document.getElementById('customerId').value = customer.id;
+            document.getElementById('newCustomerName').value = customer.name;
+            document.getElementById('newCustomerEmail').value = customer.email;
+            document.getElementById('newCustomerPhone').value = customer.phone;
+            document.getElementById('newCustomerAddress').value = customer.address;
+            showCustomerForm();
+        }
+
+        function deleteCustomer(index) {
+            if (confirm('Are you sure you want to delete this customer?')) {
+                customers.splice(index, 1);
+                saveData();
+                updateCustomersList();
+                updateCustomerSelect();
+            }
+        }
+
+        function addBillItem() {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'bill-item';
+            itemDiv.innerHTML = `
+                <button type="button" class="remove-item" onclick="this.parentElement.remove(); calculateBillTotals()">×</button>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Description*</label>
+                        <input type="text" class="item-description" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity*</label>
+                        <input type="number" class="item-quantity" value="1" min="1" required onchange="calculateBillTotals()">
+                    </div>
+                    <div class="form-group">
+                        <label>Unit Price*</label>
+                        <input type="number" class="item-price" value="0" min="0" step="0.01" required onchange="calculateBillTotals()">
+                    </div>
+                    <div class="form-group">
+                        <label>Total</label>
+                        <input type="number" class="item-total" readonly>
+                    </div>
+                </div>
+            `;
+            document.getElementById('billItems').appendChild(itemDiv);
+        }
+
+        function calculateBillTotals() {
+            const items = document.querySelectorAll('.bill-item');
+            let subtotal = 0;
+            
+            items.forEach(item => {
+                const quantity = parseFloat(item.querySelector('.item-quantity').value) || 0;
+                const price = parseFloat(item.querySelector('.item-price').value) || 0;
+                const total = quantity * price;
+                item.querySelector('.item-total').value = total.toFixed(2);
+                subtotal += total;
+            });
+            
+            document.getElementById('subtotal').value = subtotal.toFixed(2);
+            
+            const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+            const taxAmount = subtotal * (taxRate / 100);
+            document.getElementById('taxAmount').value = taxAmount.toFixed(2);
+            
+            const total = subtotal + taxAmount;
+            document.getElementById('totalAmount').value = total.toFixed(2);
+        }
+
+        function updateReports() {
+            updateRevenueChart();
+            updateStatusChart();
+            updateCustomersChart();
+        }
+
+        function updateRevenueChart() {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            const monthlyData = {};
+            
+            bills.forEach(bill => {
+                const month = bill.date.substring(0, 7);
+                if (!monthlyData[month]) monthlyData[month] = 0;
+                if (bill.status === 'paid') {
+                    monthlyData[month] += parseFloat(bill.amount);
+                }
+            });
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Object.keys(monthlyData),
+                    datasets: [{
+                        label: 'Monthly Revenue',
+                        data: Object.values(monthlyData),
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateStatusChart() {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            const statusCounts = {
+                paid: bills.filter(b => b.status === 'paid').length,
+                pending: bills.filter(b => b.status === 'pending').length,
+                partial: bills.filter(b => b.status === 'partial').length,
+                overdue: bills.filter(b => b.status === 'overdue').length
+            };
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Paid', 'Pending', 'Partial', 'Overdue'],
+                    datasets: [{
+                        data: Object.values(statusCounts),
+                        backgroundColor: [
+                            '#2ecc71',
+                            '#f1c40f',
+                            '#3498db',
+                            '#e74c3c'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        }
+
+        function updateCustomersChart() {
+            const ctx = document.getElementById('customersChart').getContext('2d');
+            const customerTotals = {};
+            
+            bills.forEach(bill => {
+                const customer = customers.find(c => c.id === bill.customerId);
+                if (customer) {
+                    if (!customerTotals[customer.name]) customerTotals[customer.name] = 0;
+                    customerTotals[customer.name] += parseFloat(bill.amount);
+                }
+            });
+            
+            const sortedCustomers = Object.entries(customerTotals)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5);
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sortedCustomers.map(([name]) => name),
+                    datasets: [{
+                        label: 'Total Billing',
+                        data: sortedCustomers.map(([,total]) => total),
+                        backgroundColor: 'rgba(54, 162, 235, 0.8)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Event Listeners
+        document.getElementById('addCustomerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const customer = {
+                id: Date.now(),
+                name: document.getElementById('newCustomerName').value,
+                email: document.getElementById('newCustomerEmail').value,
+                phone: document.getElementById('newCustomerPhone').value,
+                address: document.getElementById('newCustomerAddress').value
+            };
+            
+            addCustomer(customer);
+            hideCustomerForm();
+        });
     </script>
 </body>
 </html>
+
